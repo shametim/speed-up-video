@@ -614,12 +614,28 @@
         const PREVIEW_SECONDS = 60;
         let previewObjectUrl = null;
         let fullObjectUrl = null;
+        let conversionInProgress = false;
+
+        const handleBeforeUnload = (event) => {
+            if (!conversionInProgress) return;
+            event.preventDefault();
+            event.returnValue = 'A conversion is in progress. Are you sure you want to close this tab?';
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
 
         const formatMinutes = (minutes) => {
             const totalSeconds = Math.max(1, Math.round(minutes * 60));
             const mm = String(Math.floor(totalSeconds / 60));
             const ss = String(totalSeconds % 60).padStart(2, '0');
             return `${mm}:${ss}`;
+        };
+
+        const formatMinutesRemaining = (seconds) => {
+            if (!Number.isFinite(seconds) || seconds <= 0) return '<1 min';
+            const minutes = seconds / 60;
+            if (minutes < 1) return '<1 min';
+            return `${minutes.toFixed(1)} min`;
         };
 
         const updateButtonText = () => {
@@ -670,6 +686,7 @@
             }
 
             try {
+                conversionInProgress = true;
                 convertBtn.disabled = true;
                 previewBtn.disabled = true;
                 progressContainer.style.display = 'block';
@@ -731,9 +748,18 @@
                 }
 
                 // Monitor Progress
+                const conversionStartedAt = performance.now();
                 conversion.onProgress = (val) => {
                     progressBar.value = val * 100;
-                    log.textContent = `Converting... ${Math.round(val * 100)}%`;
+                    const percent = Math.round(val * 100);
+                    if (val <= 0.001) {
+                        log.textContent = `Converting... ${percent}%`;
+                        return;
+                    }
+                    const elapsedSeconds = (performance.now() - conversionStartedAt) / 1000;
+                    const estimatedTotalSeconds = elapsedSeconds / val;
+                    const remainingSeconds = Math.max(0, estimatedTotalSeconds - elapsedSeconds);
+                    log.textContent = `Converting... ${percent}% (${formatMinutesRemaining(remainingSeconds)} left)`;
                 };
 
                 // 4. EXECUTE
@@ -767,6 +793,7 @@
                 console.error(err);
                 log.textContent = "Error: " + err.message;
             } finally {
+                conversionInProgress = false;
                 convertBtn.disabled = false;
                 previewBtn.disabled = false;
             }
