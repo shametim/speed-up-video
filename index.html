@@ -203,6 +203,26 @@
             min-width: 220px;
         }
 
+        .preview-note {
+            background: var(--soft);
+            color: var(--text);
+            font-size: 0.92rem;
+            font-weight: 700;
+            padding: 10px 12px;
+        }
+
+        .preview-player {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .preview-player video {
+            width: 100%;
+            max-height: 420px;
+            background: #000;
+        }
+
         button {
             padding: 12px 14px;
             cursor: pointer;
@@ -358,9 +378,16 @@
             </span>
         </label>
 
+        <div class="preview-note">Recommended: try the 1-minute preview first so you can see how the result feels before full conversion.</div>
+
         <div class="action-row">
             <button id="previewBtn" disabled>Create 1-Min Preview</button>
             <button id="convertBtn" disabled>Convert Full Video</button>
+        </div>
+
+        <div id="previewPlayerWrap" class="preview-player">
+            <div class="speed-title">Preview Playback</div>
+            <video id="previewVideo" controls playsinline></video>
         </div>
 
         <div id="progressContainer" style="display:none;">
@@ -394,10 +421,13 @@
         const speedEstimate = document.getElementById('speedEstimate');
         const fileName = document.getElementById('fileName');
         const themeToggle = document.getElementById('themeToggle');
+        const previewPlayerWrap = document.getElementById('previewPlayerWrap');
+        const previewVideo = document.getElementById('previewVideo');
         const body = document.body;
 
         let selectedSpeed = 5;
         const PREVIEW_SECONDS = 60;
+        let previewObjectUrl = null;
 
         const formatMinutes = (minutes) => {
             const totalSeconds = Math.max(1, Math.round(minutes * 60));
@@ -530,13 +560,22 @@
                 const blob = new Blob([buffer], { type: 'video/mp4' });
                 const url = URL.createObjectURL(blob);
                 
-                const a = document.createElement('a');
-                a.href = url;
-                const suffix = previewOnly ? `preview_1min_${selectedSpeed}x` : `full_${selectedSpeed}x`;
-                a.download = `${suffix}_${file.name}.mp4`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                if (previewOnly) {
+                    if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+                    previewObjectUrl = url;
+                    previewVideo.src = previewObjectUrl;
+                    previewPlayerWrap.style.display = 'flex';
+                    previewVideo.currentTime = 0;
+                    previewVideo.play().catch(() => {});
+                } else {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    const suffix = `full_${selectedSpeed}x`;
+                    a.download = `${suffix}_${file.name}.mp4`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
 
             } catch (err) {
                 console.error(err);
