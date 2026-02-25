@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="speed up your videos for free">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="100%" stop-color="#1f4f8a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#31d0ff"/>
+      <stop offset="100%" stop-color="#8af5c3"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1040" cy="-40" r="280" fill="#ffffff" fill-opacity="0.06"/>
+  <circle cx="120" cy="630" r="220" fill="#ffffff" fill-opacity="0.05"/>
+
+  <rect x="80" y="110" width="1040" height="410" rx="34" fill="#ffffff" fill-opacity="0.08"/>
+
+  <text x="120" y="285" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="88" font-weight="800" letter-spacing="1">
+    SPEED UP YOUR
+  </text>
+  <text x="120" y="380" fill="url(#accent)" font-family="Arial, Helvetica, sans-serif" font-size="88" font-weight="800" letter-spacing="1">
+    VIDEOS FOR FREE
+  </text>
+
+  <text x="120" y="460" fill="#d7e6ff" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="500">
+    Local browser tool • Fast preview • Quick export
+  </text>
+</svg>

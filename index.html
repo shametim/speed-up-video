@@ -12,12 +12,12 @@
     <meta property="og:title" content="Speedup Video">
     <meta property="og:description" content="Speed up videos locally in your browser. Preview first, then export full video.">
     <meta property="og:url" content="https://speedup-video.pages.dev/">
-    <meta property="og:image" content="https://github.com/shametim/speedup-video/releases/download/v1/speedup-video-prod.png">
+    <meta property="og:image" content="https://speedup-video.pages.dev/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Speedup Video">
     <meta name="twitter:description" content="Fast local browser video speedup with preview-first export flow.">
-    <meta name="twitter:image" content="https://github.com/shametim/speedup-video/releases/download/v1/speedup-video-prod.png">
-    <title>Speedup Video</title>
+    <meta name="twitter:image" content="https://speedup-video.pages.dev/og-image.png">
+    <title>Speed Up Video for Free</title>
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -359,6 +359,17 @@
             font-weight: 600;
         }
 
+        .throttle-note {
+            margin: 0;
+            background: #fff8e8;
+            border: 1px solid #f6dba8;
+            border-radius: 12px;
+            padding: 12px 14px;
+            color: #6a4b16;
+            font-size: 0.89rem;
+            font-weight: 600;
+        }
+
         .preview-player {
             display: none;
             flex-direction: column;
@@ -501,10 +512,10 @@
             <div>
                 <div class="eyebrow-row">
                     <p class="eyebrow">Local Video Utility</p>
-                    <p class="brand-mark">by Ship Slop</p>
+                    <p class="brand-mark">by Slop Ship</p>
                 </div>
-                <h1>Speed up your clips without leaving the browser.</h1>
-                <p class="intro">Upload once, choose speed, preview, export. Conversion <strong class="run-local">runs on your machine</strong> and never sends the file to a server.</p>
+                <h1>Speed Up Video for Free in the Browser.</h1>
+                <p class="intro">Choose speed, preview, export. Conversion <strong class="run-local">runs on your machine</strong> and never sends the file to a server.</p>
                 <p class="agent-instructions"><strong>Agent instructions:</strong> Point the agent to this web page and ask it to convert the video of choice from your local file system.</p>
             </div>
             <div class="top-actions">
@@ -539,6 +550,7 @@
                         <button type="button" class="speed-btn active" data-speed="5">5x</button>
                         <button type="button" class="speed-btn" data-speed="8">8x</button>
                         <button type="button" class="speed-btn" data-speed="10">10x</button>
+                        <button type="button" class="speed-btn" data-speed="20">20x</button>
                     </div>
                     <p id="speedEstimate" class="recommendation"></p>
                     <p class="recommendation">Recommended for social clips: 2x or 3x for talking content, 4x+ for timelapse-style posts.</p>
@@ -549,6 +561,11 @@
                     <span>Discard audio (recommended). Keeping audio at high speeds often sounds distorted without pitch correction.</span>
                 </label>
 
+                <label class="checkbox-row" for="compressOutput">
+                    <input type="checkbox" id="compressOutput">
+                    <span>Compress output to 1080p at medium quality (off by default).</span>
+                </label>
+
                 <div class="action-row">
                     <button id="previewBtn" disabled>Create 1-Min Preview</button>
                     <button id="convertBtn" disabled>Convert Full Video</button>
@@ -557,6 +574,7 @@
 
             <section class="panel status-panel" aria-label="Preview and status">
                 <p class="preview-note">Start with the 1-minute preview to check pacing before running the full export.</p>
+                <p class="throttle-note">Keep this tab focused while converting to avoid browser background throttling.</p>
 
                 <div id="previewPlayerWrap" class="preview-player">
                     <p class="section-label">Preview playback</p>
@@ -573,7 +591,6 @@
                 </div>
 
                 <pre id="log">Waiting for file...</pre>
-                <p class="small">by <a href="https://martinshameti.com" target="_blank" rel="noopener noreferrer">martinshameti.com</a></p>
             </section>
         </section>
 
@@ -592,7 +609,8 @@
             BlobSource, 
             BufferTarget, 
             Mp4OutputFormat, 
-            ALL_FORMATS 
+            ALL_FORMATS,
+            QUALITY_MEDIUM
         } from 'https://cdn.jsdelivr.net/npm/mediabunny@1.34.5/dist/bundles/mediabunny.mjs';
 
         const fileInput = document.getElementById('fileInput');
@@ -602,6 +620,7 @@
         const progressBar = document.getElementById('progressBar');
         const progressContainer = document.getElementById('progressContainer');
         const discardAudioCheckbox = document.getElementById('discardAudio');
+        const compressOutputCheckbox = document.getElementById('compressOutput');
         const speedButtons = document.querySelectorAll('.speed-btn');
         const speedEstimate = document.getElementById('speedEstimate');
         const fileName = document.getElementById('fileName');
@@ -629,13 +648,6 @@
             const mm = String(Math.floor(totalSeconds / 60));
             const ss = String(totalSeconds % 60).padStart(2, '0');
             return `${mm}:${ss}`;
-        };
-
-        const formatMinutesRemaining = (seconds) => {
-            if (!Number.isFinite(seconds) || seconds <= 0) return '<1 min';
-            const minutes = seconds / 60;
-            if (minutes < 1) return '<1 min';
-            return `${minutes.toFixed(1)} min`;
         };
 
         const updateButtonText = () => {
@@ -713,14 +725,31 @@
                     trim: previewOnly ? { start: 0, end: PREVIEW_SECONDS } : undefined,
                     
                     // VIDEO PROCESSING
-                    video: {
-                        // This function runs for every single frame
-                        process: (sample) => {
-                            // Divide timestamp and duration by speed to make playback faster
-                            sample.setTimestamp(sample.timestamp / SPEED_FACTOR);
-                            sample.setDuration(sample.duration / SPEED_FACTOR);
-                            return sample;
+                    video: async (track) => {
+                        let sourceFrameRate = track.timeResolution || 30;
+                        try {
+                            const stats = await track.computePacketStats(120);
+                            if (Number.isFinite(stats.averagePacketRate) && stats.averagePacketRate > 0) {
+                                sourceFrameRate = stats.averagePacketRate;
+                            }
+                        } catch {
+                            // Fall back to track time resolution if packet stats cannot be computed
                         }
+
+                        // Keep output FPS in a widely-compatible range by downsampling first,
+                        // then retime timestamps to get the requested speedup.
+                        const conversionFrameRate = Math.max(1, sourceFrameRate / SPEED_FACTOR);
+
+                        return {
+                            width: compressOutputCheckbox.checked ? 1920 : undefined,
+                            bitrate: compressOutputCheckbox.checked ? QUALITY_MEDIUM : undefined,
+                            frameRate: conversionFrameRate,
+                            process: (sample) => {
+                                sample.setTimestamp(sample.timestamp / SPEED_FACTOR);
+                                sample.setDuration(sample.duration / SPEED_FACTOR);
+                                return sample;
+                            }
+                        };
                     },
 
                     // AUDIO PROCESSING
@@ -748,18 +777,10 @@
                 }
 
                 // Monitor Progress
-                const conversionStartedAt = performance.now();
                 conversion.onProgress = (val) => {
                     progressBar.value = val * 100;
                     const percent = Math.round(val * 100);
-                    if (val <= 0.001) {
-                        log.textContent = `Converting... ${percent}%`;
-                        return;
-                    }
-                    const elapsedSeconds = (performance.now() - conversionStartedAt) / 1000;
-                    const estimatedTotalSeconds = elapsedSeconds / val;
-                    const remainingSeconds = Math.max(0, estimatedTotalSeconds - elapsedSeconds);
-                    log.textContent = `Converting... ${percent}% (${formatMinutesRemaining(remainingSeconds)} left)`;
+                    log.textContent = `Converting... ${percent}%`;
                 };
 
                 // 4. EXECUTE
