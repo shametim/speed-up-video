@@ -1,3 +1,4 @@
 .DS_Store
 .wrangler/
 agent-browser-*.png
+!agent-browser-ship-slop-prod.png

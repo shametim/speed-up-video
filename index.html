@@ -5,30 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Speedup Video</title>
     <style>
-        :root {
-            --bg: #0a0d12;
-            --panel: #141922;
-            --text: #f8fafc;
-            --muted: #b0bac7;
-            --soft: #202838;
-            --accent: #f8fafc;
-            --accent-text: #0a0d12;
-            --button-soft: #263247;
-            --ok: #2bc174;
-            --shadow: rgba(0, 0, 0, 0.35);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
-        body[data-theme="light"] {
-            --bg: #f4f6fa;
-            --panel: #ffffff;
-            --text: #111827;
-            --muted: #4b5563;
-            --soft: #e5eaf3;
+        :root {
+            --bg: #f5f7fa;
+            --surface: #ffffff;
+            --surface-soft: #f0f3f7;
+            --text: #101828;
+            --muted: #667085;
+            --line: #d9dee7;
             --accent: #111827;
             --accent-text: #ffffff;
-            --button-soft: #d9e0ec;
-            --ok: #027a48;
-            --shadow: rgba(17, 24, 39, 0.12);
+            --ok: #11824a;
+            --radius: 18px;
         }
 
         * {
@@ -39,101 +28,192 @@
             margin: 0;
             background: var(--bg);
             color: var(--text);
-            font-family: "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-family: "Manrope", "Avenir Next", "Segoe UI", sans-serif;
             line-height: 1.45;
-            padding: 28px 16px 40px;
         }
 
-        .container {
-            max-width: 900px;
+        a {
+            color: var(--text);
+            text-decoration-thickness: 1px;
+            text-underline-offset: 2px;
+        }
+
+        .page {
+            max-width: 1120px;
             margin: 0 auto;
-            background: var(--panel);
-            padding: 30px;
-            box-shadow: 0 14px 36px var(--shadow);
+            padding: 56px 24px 80px;
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 36px;
         }
 
         .topbar {
             display: flex;
             justify-content: space-between;
+            gap: 24px;
+            align-items: flex-start;
+        }
+
+        .eyebrow {
+            margin: 0;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .eyebrow-row {
+            display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .brand-mark {
+            margin: 0;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #98a2b3;
+            white-space: nowrap;
+        }
+
+        h1 {
+            margin: 8px 0 0;
+            font-size: clamp(2.1rem, 5vw, 3.6rem);
+            line-height: 1.08;
+            letter-spacing: -0.02em;
+            max-width: 820px;
+        }
+
+        .intro {
+            margin: 16px 0 0;
+            color: var(--muted);
+            font-size: 1.04rem;
+            max-width: 640px;
+        }
+
+        .run-local {
+            color: var(--text);
+            background: #eef2f7;
+            border: 1px solid #d8e0ea;
+            border-radius: 999px;
+            padding: 2px 8px;
+            white-space: nowrap;
+            font-weight: 800;
         }
 
         .top-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            padding-top: 2px;
+            flex-shrink: 0;
         }
 
-        h1 {
-            margin: 0;
-            font-size: 2rem;
-            line-height: 1.2;
-            letter-spacing: -0.01em;
-        }
-
-        p {
-            margin: 0;
-            color: var(--muted);
-        }
-
-        .meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .pill {
-            background: var(--soft);
+        .ghost-btn,
+        .icon-btn {
+            border: 1px solid var(--line);
+            background: var(--surface);
             color: var(--text);
-            padding: 7px 11px;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 999px;
             font-size: 0.86rem;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.01em;
         }
 
-        .hero-text {
-            font-size: 1.2rem;
+        .icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            padding: 0;
+        }
+
+        .icon-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+            gap: 28px;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 28px;
+        }
+
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .status-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .section-label {
+            font-size: 0.88rem;
             font-weight: 700;
-            color: var(--text);
-            line-height: 1.35;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
         }
 
         .upload-wrap {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px 0;
         }
 
         .upload-card {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             justify-content: center;
-            width: min(620px, 100%);
-            min-height: 140px;
-            background: var(--soft);
+            width: 100%;
+            min-height: 180px;
+            border: 1.5px dashed #b6c0cd;
+            border-radius: 14px;
+            background: #fcfdff;
             cursor: pointer;
-            font-weight: 700;
             text-align: center;
-            padding: 20px;
+            padding: 24px;
+            font-weight: 700;
+            font-size: 1.08rem;
         }
 
         .upload-sub {
-            font-size: 0.92rem;
             color: var(--muted);
+            font-size: 0.92rem;
             font-weight: 600;
         }
 
         .file-name {
-            text-align: center;
-            font-weight: 600;
+            font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.86rem;
             color: var(--muted);
-            min-height: 24px;
+            min-height: 21px;
+            padding: 2px 0;
         }
 
         #fileInput {
@@ -146,46 +226,52 @@
             gap: 10px;
         }
 
-        .speed-title {
-            font-size: 1rem;
-            font-weight: 700;
-        }
-
         .speed-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
+        }
+
+        button {
+            border-radius: 12px;
+            border: 1px solid transparent;
+            padding: 12px 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            letter-spacing: 0.01em;
         }
 
         .speed-btn {
-            background: var(--button-soft);
+            background: var(--surface-soft);
             color: var(--text);
-            border: none;
-            padding: 10px 14px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
+            border-color: #e0e6ef;
+            min-width: 66px;
         }
 
         .speed-btn.active {
             background: var(--accent);
             color: var(--accent-text);
+            border-color: var(--accent);
         }
 
         .recommendation {
             color: var(--muted);
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-size: 0.92rem;
+            margin: 0;
         }
 
         .checkbox-row {
             display: flex;
-            gap: 8px;
             align-items: flex-start;
-            color: var(--muted);
-            font-size: 0.92rem;
-            background: var(--soft);
-            padding: 12px;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1px solid #e4e9f1;
+            border-radius: 12px;
+            padding: 14px;
+            color: #445164;
+            font-size: 0.93rem;
         }
 
         .checkbox-row input {
@@ -194,8 +280,8 @@
 
         .action-row {
             display: flex;
-            gap: 10px;
             flex-wrap: wrap;
+            gap: 10px;
         }
 
         .action-row button {
@@ -203,35 +289,15 @@
             min-width: 220px;
         }
 
-        .preview-note {
-            background: var(--soft);
+        #previewBtn {
+            background: #ffffff;
             color: var(--text);
-            font-size: 0.92rem;
-            font-weight: 700;
-            padding: 10px 12px;
+            border-color: var(--line);
         }
 
-        .preview-player {
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .preview-player video {
-            width: 100%;
-            max-height: 420px;
-            background: #000;
-        }
-
-        button {
-            padding: 12px 14px;
-            cursor: pointer;
+        #convertBtn {
             background: var(--accent);
             color: var(--accent-text);
-            border: none;
-            font-weight: 700;
-            font-size: 0.96rem;
-            letter-spacing: 0.01em;
         }
 
         button:hover:not(:disabled) {
@@ -239,20 +305,68 @@
         }
 
         button:disabled {
-            background: #98a2b3;
+            background: #d3d9e2;
+            border-color: #d3d9e2;
+            color: #7f8b9c;
             cursor: not-allowed;
+        }
+
+        .preview-note {
+            margin: 0;
+            background: var(--surface-soft);
+            border: 1px solid #e0e6ef;
+            border-radius: 12px;
+            padding: 14px;
+            color: #334155;
+            font-size: 0.93rem;
+            font-weight: 600;
+        }
+
+        .preview-player {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .preview-player .section-label {
+            margin: 0;
+        }
+
+        .preview-player video {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid #d5dce8;
+            background: #000;
+            max-height: 420px;
+        }
+
+        .progress-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .progress-wrap label {
+            font-size: 0.85rem;
+            color: var(--muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
         }
 
         progress {
             width: 100%;
-            height: 14px;
+            height: 12px;
             appearance: none;
             border: none;
-            background: var(--soft);
+            border-radius: 99px;
+            background: #e9edf3;
+            overflow: hidden;
         }
 
         progress::-webkit-progress-bar {
-            background: var(--soft);
+            background: #e9edf3;
         }
 
         progress::-webkit-progress-value {
@@ -260,144 +374,159 @@
         }
 
         #log {
-            background: #0a0d12;
-            color: #f8fafc;
-            padding: 12px;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            margin: 0;
+            border-radius: 12px;
+            border: 1px solid #dce3ee;
+            background: #f8fafc;
+            padding: 14px;
+            min-height: 58px;
+            font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            color: #364152;
             white-space: pre-wrap;
-            min-height: 46px;
-        }
-
-        a {
-            color: var(--accent);
-            font-weight: 700;
+            font-size: 0.83rem;
         }
 
         .small {
+            margin: 0;
             font-size: 0.88rem;
-        }
-
-        .ghost-btn {
-            background: var(--button-soft);
-            color: var(--text);
-            font-size: 0.88rem;
-            padding: 9px 11px;
-        }
-
-        .icon-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 38px;
-            height: 38px;
-            background: var(--button-soft);
-            color: var(--text);
-            text-decoration: none;
-        }
-
-        .icon-btn svg {
-            width: 19px;
-            height: 19px;
-            fill: currentColor;
+            color: var(--muted);
         }
 
         .footer {
-            margin-top: 8px;
             color: var(--muted);
-            font-size: 0.88rem;
+            font-size: 0.86rem;
             text-align: center;
+            margin-top: 6px;
         }
 
-        .footer a {
-            color: var(--text);
+        .cloudflare-note {
+            margin: 6px 0 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #4b5565;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
 
-        @media (max-width: 640px) {
-            .container {
+        .cloudflare-note img {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 980px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .page {
+                padding: 32px 14px 52px;
+                gap: 24px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .panel {
                 padding: 18px;
             }
 
-            h1 {
-                font-size: 1.7rem;
-            }
-
-            .hero-text {
-                font-size: 1.08rem;
+            .upload-card {
+                min-height: 150px;
             }
         }
     </style>
 </head>
-<body data-theme="dark">
-
-    <div class="container">
-        <div class="topbar">
-            <h1>Speedup Video</h1>
+<body>
+    <main class="page">
+        <header class="topbar">
+            <div>
+                <div class="eyebrow-row">
+                    <p class="eyebrow">Local Video Utility</p>
+                    <p class="brand-mark">by Ship Slop</p>
+                </div>
+                <h1>Speed up your clips without leaving the browser.</h1>
+                <p class="intro">Upload once, choose speed, preview, export. Conversion <strong class="run-local">runs on your machine</strong> and never sends the file to a server.</p>
+            </div>
             <div class="top-actions">
                 <a class="icon-btn" href="https://github.com/shametim/speedup-video" target="_blank" rel="noopener noreferrer" aria-label="View GitHub repository">
                     <svg viewBox="0 0 16 16" aria-hidden="true">
                         <path d="M8 0C3.58 0 0 3.58 0 8a8.01 8.01 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.1 0 0 .67-.21 2.2.82A7.54 7.54 0 0 1 8 3.8a7.5 7.5 0 0 1 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.09.16 1.9.08 2.1.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path>
                     </svg>
                 </a>
-                <button id="themeToggle" class="ghost-btn" type="button">Switch to Light</button>
+                <a class="ghost-btn" href="https://mediabunny.dev/" target="_blank" rel="noopener noreferrer">Built with Mediabunny</a>
             </div>
+        </header>
+
+        <section class="workspace">
+            <section class="panel controls-panel" aria-label="Video controls">
+                <div class="section">
+                    <div class="section-label">1. Select video</div>
+                    <div class="upload-wrap">
+                        <label class="upload-card" for="fileInput">
+                            <span>Choose Video File</span>
+                            <span class="upload-sub">Click to select from your machine</span>
+                        </label>
+                        <input type="file" id="fileInput" accept="video/*">
+                    </div>
+                    <div id="fileName" class="file-name">No file selected</div>
+                </div>
+
+                <div class="section speed-section">
+                    <div class="section-label">2. Pick speed multiplier</div>
+                    <div id="speedButtons" class="speed-grid">
+                        <button type="button" class="speed-btn" data-speed="2">2x</button>
+                        <button type="button" class="speed-btn" data-speed="3">3x</button>
+                        <button type="button" class="speed-btn active" data-speed="5">5x</button>
+                        <button type="button" class="speed-btn" data-speed="8">8x</button>
+                        <button type="button" class="speed-btn" data-speed="10">10x</button>
+                    </div>
+                    <p id="speedEstimate" class="recommendation"></p>
+                    <p class="recommendation">Recommended for social clips: 2x or 3x for talking content, 4x+ for timelapse-style posts.</p>
+                </div>
+
+                <label class="checkbox-row" for="discardAudio">
+                    <input type="checkbox" id="discardAudio" checked>
+                    <span>Discard audio (recommended). Keeping audio at high speeds often sounds distorted without pitch correction.</span>
+                </label>
+
+                <div class="action-row">
+                    <button id="previewBtn" disabled>Create 1-Min Preview</button>
+                    <button id="convertBtn" disabled>Convert Full Video</button>
+                </div>
+            </section>
+
+            <section class="panel status-panel" aria-label="Preview and status">
+                <p class="preview-note">Start with the 1-minute preview to check pacing before running the full export.</p>
+
+                <div id="previewPlayerWrap" class="preview-player">
+                    <p class="section-label">Preview playback</p>
+                    <video id="previewVideo" controls playsinline></video>
+                </div>
+
+                <div id="progressContainer" class="progress-wrap" style="display:none;">
+                    <label>Progress</label>
+                    <progress id="progressBar" value="0" max="100"></progress>
+                </div>
+
+                <pre id="log">Waiting for file...</pre>
+                <p class="small">by <a href="https://martinshameti.com" target="_blank" rel="noopener noreferrer">martinshameti.com</a></p>
+            </section>
+        </section>
+
+        <div class="footer">
+            <div>All processing stays in-browser.</div>
+            <p class="cloudflare-note">
+                <img src="https://cf-assets.www.cloudflare.com/slt3lc6tev37/5df5tsrC9h5GxedMQEnScq/8b5ca64b77479325052c4217d827f385/cloudflare-workers.svg" alt="Cloudflare logo">
+                Deployed globally with Cloudflare Pages, courtesy of Cloudflare.
+            </p>
         </div>
-        <p class="hero-text">YOUR VIDEO STAYS IN YOUR COMPUTER. YOUR COMPUTER DOES THE WORK. AND IT'S FREE.</p>
-        <p class="small">Built with <a href="https://mediabunny.dev/" target="_blank" rel="noopener noreferrer">Mediabunny</a>.</p>
-        <div class="meta">
-            <span class="pill">Free</span>
-            <span class="pill">In Browser</span>
-            <span class="pill">Local Processing</span>
-        </div>
-
-        <div class="upload-wrap">
-            <label class="upload-card" for="fileInput">
-                <span>Choose Video File</span>
-                <span class="upload-sub">Click to select from your machine</span>
-            </label>
-            <input type="file" id="fileInput" accept="video/*">
-        </div>
-        <div id="fileName" class="file-name">No file selected</div>
-
-        <div class="speed-section">
-            <div class="speed-title">Speed Multiplier</div>
-            <div id="speedButtons" class="speed-grid">
-                <button type="button" class="speed-btn" data-speed="2">2x</button>
-                <button type="button" class="speed-btn" data-speed="3">3x</button>
-                <button type="button" class="speed-btn active" data-speed="5">5x</button>
-                <button type="button" class="speed-btn" data-speed="8">8x</button>
-                <button type="button" class="speed-btn" data-speed="10">10x</button>
-            </div>
-            <div id="speedEstimate" class="recommendation"></div>
-            <div class="recommendation">Recommended for X.com/social media: 2x or 3x for talking clips, 4x+ for timelapse-style posts.</div>
-        </div>
-
-        <label class="checkbox-row" for="discardAudio">
-            <input type="checkbox" id="discardAudio" checked>
-            <span>
-                Discard Audio (recommended). Keeping audio at high speeds often sounds distorted without pitch-correction.
-            </span>
-        </label>
-
-        <div class="preview-note">Recommended: try the 1-minute preview first so you can see how the result feels before full conversion.</div>
-
-        <div class="action-row">
-            <button id="previewBtn" disabled>Create 1-Min Preview</button>
-            <button id="convertBtn" disabled>Convert Full Video</button>
-        </div>
-
-        <div id="previewPlayerWrap" class="preview-player">
-            <div class="speed-title">Preview Playback</div>
-            <video id="previewVideo" controls playsinline></video>
-        </div>
-
-        <div id="progressContainer" style="display:none;">
-            <label>Progress:</label>
-            <progress id="progressBar" value="0" max="100"></progress>
-        </div>
-
-        <div id="log">Waiting for file...</div>
-        <div class="footer">by <a href="https://martinshameti.com" target="_blank" rel="noopener noreferrer">martinshameti.com</a></div>
-    </div>
+    </main>
 
     <script type="module">
         import { 
@@ -420,10 +549,8 @@
         const speedButtons = document.querySelectorAll('.speed-btn');
         const speedEstimate = document.getElementById('speedEstimate');
         const fileName = document.getElementById('fileName');
-        const themeToggle = document.getElementById('themeToggle');
         const previewPlayerWrap = document.getElementById('previewPlayerWrap');
         const previewVideo = document.getElementById('previewVideo');
-        const body = document.body;
 
         let selectedSpeed = 5;
         const PREVIEW_SECONDS = 60;
@@ -436,25 +563,13 @@
             return `${mm}:${ss}`;
         };
 
-        const applyTheme = (theme) => {
-            body.dataset.theme = theme === 'light' ? 'light' : 'dark';
-            themeToggle.textContent = body.dataset.theme === 'dark' ? 'Switch to Light' : 'Switch to Dark';
-            localStorage.setItem('theme', body.dataset.theme);
-        };
-
         const updateButtonText = () => {
             convertBtn.textContent = `Convert Full Video (${selectedSpeed}x)`;
             previewBtn.textContent = `Create 1-Min Preview (${selectedSpeed}x)`;
             speedEstimate.textContent = `Example: a 5:00 video becomes about ${formatMinutes(5 / selectedSpeed)} at ${selectedSpeed}x speed.`;
         };
 
-        const savedTheme = localStorage.getItem('theme');
-        applyTheme(savedTheme === 'light' ? 'light' : 'dark');
         updateButtonText();
-
-        themeToggle.addEventListener('click', () => {
-            applyTheme(body.dataset.theme === 'dark' ? 'light' : 'dark');
-        });
 
         speedButtons.forEach((button) => {
             button.addEventListener('click', () => {
@@ -510,7 +625,7 @@
                     video: {
                         // This function runs for every single frame
                         process: (sample) => {
-                            // Divide timestamp and duration by 5 to make it 5x faster
+                            // Divide timestamp and duration by speed to make playback faster
                             sample.setTimestamp(sample.timestamp / SPEED_FACTOR);
                             sample.setDuration(sample.duration / SPEED_FACTOR);
                             return sample;
@@ -519,14 +634,13 @@
 
                     // AUDIO PROCESSING
                     audio: (track) => {
-                        // Audio at 5x is usually garbage, so we discard it by default
+                        // Audio at high speed is usually undesirable, so we discard it by default
                         if (discardAudioCheckbox.checked) {
                             return { discard: true };
                         }
                         
-                        // If user wants to keep it, we must technically speed up timestamps too,
-                        // but this will likely result in overlapping/broken audio 
-                        // because we aren't performing pitch-correction/time-stretching.
+                        // If user wants to keep it, we still need to speed timestamps.
+                        // This may sound distorted without pitch-correction/time-stretching.
                         return {
                             process: (sample) => {
                                 sample.setTimestamp(sample.timestamp / SPEED_FACTOR);
