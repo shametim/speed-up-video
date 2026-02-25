@@ -341,6 +341,30 @@
             max-height: 420px;
         }
 
+        .download-wrap {
+            display: none;
+        }
+
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid #0f172a;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 12px 14px;
+            font-size: 0.93rem;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: 0.01em;
+        }
+
+        .download-link:hover {
+            opacity: 0.92;
+        }
+
         .progress-wrap {
             display: flex;
             flex-direction: column;
@@ -514,6 +538,10 @@
                     <progress id="progressBar" value="0" max="100"></progress>
                 </div>
 
+                <div id="downloadWrap" class="download-wrap">
+                    <a id="downloadFullBtn" class="download-link" href="#" download>Download Full Video</a>
+                </div>
+
                 <pre id="log">Waiting for file...</pre>
                 <p class="small">by <a href="https://martinshameti.com" target="_blank" rel="noopener noreferrer">martinshameti.com</a></p>
             </section>
@@ -551,10 +579,13 @@
         const fileName = document.getElementById('fileName');
         const previewPlayerWrap = document.getElementById('previewPlayerWrap');
         const previewVideo = document.getElementById('previewVideo');
+        const downloadWrap = document.getElementById('downloadWrap');
+        const downloadFullBtn = document.getElementById('downloadFullBtn');
 
         let selectedSpeed = 5;
         const PREVIEW_SECONDS = 60;
         let previewObjectUrl = null;
+        let fullObjectUrl = null;
 
         const formatMinutes = (minutes) => {
             const totalSeconds = Math.max(1, Math.round(minutes * 60));
@@ -571,6 +602,16 @@
 
         updateButtonText();
 
+        const resetFullDownload = () => {
+            if (fullObjectUrl) {
+                URL.revokeObjectURL(fullObjectUrl);
+                fullObjectUrl = null;
+            }
+            downloadWrap.style.display = 'none';
+            downloadFullBtn.removeAttribute('href');
+            downloadFullBtn.removeAttribute('download');
+        };
+
         speedButtons.forEach((button) => {
             button.addEventListener('click', () => {
                 selectedSpeed = Number(button.dataset.speed);
@@ -586,6 +627,7 @@
                 previewBtn.disabled = false;
                 fileName.textContent = `Selected: ${fileInput.files[0].name}`;
                 log.textContent = `Selected: ${fileInput.files[0].name}`;
+                resetFullDownload();
             }
         });
 
@@ -594,6 +636,10 @@
             if (!file) return;
             const SPEED_FACTOR = selectedSpeed;
             updateButtonText();
+
+            if (!previewOnly) {
+                resetFullDownload();
+            }
 
             try {
                 convertBtn.disabled = true;
@@ -666,8 +712,8 @@
                 await conversion.execute();
 
                 log.textContent = previewOnly
-                    ? "Preview complete! Downloading..."
-                    : "Conversion complete! Downloading...";
+                    ? "Preview complete! Playing now."
+                    : "Conversion complete! Ready to download.";
 
                 // 5. Download the result
                 const buffer = output.target.buffer;
@@ -682,13 +728,11 @@
                     previewVideo.currentTime = 0;
                     previewVideo.play().catch(() => {});
                 } else {
-                    const a = document.createElement('a');
-                    a.href = url;
+                    fullObjectUrl = url;
                     const suffix = `full_${selectedSpeed}x`;
-                    a.download = `${suffix}_${file.name}.mp4`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+                    downloadFullBtn.href = fullObjectUrl;
+                    downloadFullBtn.download = `${suffix}_${file.name}.mp4`;
+                    downloadWrap.style.display = 'block';
                 }
 
             } catch (err) {
