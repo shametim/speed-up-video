@@ -192,6 +192,17 @@
             margin-top: 2px;
         }
 
+        .action-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-row button {
+            flex: 1;
+            min-width: 220px;
+        }
+
         button {
             padding: 12px 14px;
             cursor: pointer;
@@ -347,7 +358,10 @@
             </span>
         </label>
 
-        <button id="convertBtn" disabled>Convert Video</button>
+        <div class="action-row">
+            <button id="previewBtn" disabled>Create 1-Min Preview</button>
+            <button id="convertBtn" disabled>Convert Full Video</button>
+        </div>
 
         <div id="progressContainer" style="display:none;">
             <label>Progress:</label>
@@ -371,6 +385,7 @@
 
         const fileInput = document.getElementById('fileInput');
         const convertBtn = document.getElementById('convertBtn');
+        const previewBtn = document.getElementById('previewBtn');
         const log = document.getElementById('log');
         const progressBar = document.getElementById('progressBar');
         const progressContainer = document.getElementById('progressContainer');
@@ -382,6 +397,7 @@
         const body = document.body;
 
         let selectedSpeed = 5;
+        const PREVIEW_SECONDS = 60;
 
         const formatMinutes = (minutes) => {
             const totalSeconds = Math.max(1, Math.round(minutes * 60));
@@ -397,7 +413,8 @@
         };
 
         const updateButtonText = () => {
-            convertBtn.textContent = `Convert Video (${selectedSpeed}x)`;
+            convertBtn.textContent = `Convert Full Video (${selectedSpeed}x)`;
+            previewBtn.textContent = `Create 1-Min Preview (${selectedSpeed}x)`;
             speedEstimate.textContent = `Example: a 5:00 video becomes about ${formatMinutes(5 / selectedSpeed)} at ${selectedSpeed}x speed.`;
         };
 
@@ -421,12 +438,13 @@
         fileInput.addEventListener('change', () => {
             if (fileInput.files.length > 0) {
                 convertBtn.disabled = false;
+                previewBtn.disabled = false;
                 fileName.textContent = `Selected: ${fileInput.files[0].name}`;
                 log.textContent = `Selected: ${fileInput.files[0].name}`;
             }
         });
 
-        convertBtn.addEventListener('click', async () => {
+        const runConversion = async (previewOnly) => {
             const file = fileInput.files[0];
             if (!file) return;
             const SPEED_FACTOR = selectedSpeed;
@@ -434,8 +452,11 @@
 
             try {
                 convertBtn.disabled = true;
+                previewBtn.disabled = true;
                 progressContainer.style.display = 'block';
-                log.textContent = `Initializing ${SPEED_FACTOR}x conversion...`;
+                log.textContent = previewOnly
+                    ? `Initializing 1-minute preview at ${SPEED_FACTOR}x...`
+                    : `Initializing full conversion at ${SPEED_FACTOR}x...`;
 
                 // 1. Setup Input
                 const input = new Input({
@@ -453,6 +474,7 @@
                 const conversion = await Conversion.init({
                     input,
                     output,
+                    trim: previewOnly ? { start: 0, end: PREVIEW_SECONDS } : undefined,
                     
                     // VIDEO PROCESSING
                     video: {
@@ -499,7 +521,9 @@
                 // 4. EXECUTE
                 await conversion.execute();
 
-                log.textContent = "Conversion Complete! Downloading...";
+                log.textContent = previewOnly
+                    ? "Preview complete! Downloading..."
+                    : "Conversion complete! Downloading...";
 
                 // 5. Download the result
                 const buffer = output.target.buffer;
@@ -508,7 +532,8 @@
                 
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `fast_${file.name}.mp4`;
+                const suffix = previewOnly ? `preview_1min_${selectedSpeed}x` : `full_${selectedSpeed}x`;
+                a.download = `${suffix}_${file.name}.mp4`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -518,7 +543,16 @@
                 log.textContent = "Error: " + err.message;
             } finally {
                 convertBtn.disabled = false;
+                previewBtn.disabled = false;
             }
+        };
+
+        previewBtn.addEventListener('click', async () => {
+            await runConversion(true);
+        });
+
+        convertBtn.addEventListener('click', async () => {
+            await runConversion(false);
         });
     </script>
 </body>
