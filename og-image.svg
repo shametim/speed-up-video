@@ -1,29 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="speed up your videos for free">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0b1020"/>
-      <stop offset="100%" stop-color="#1f4f8a"/>
-    </linearGradient>
     <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#31d0ff"/>
-      <stop offset="100%" stop-color="#8af5c3"/>
+      <stop offset="0%" stop-color="#1f4f8a"/>
+      <stop offset="100%" stop-color="#2ea9ff"/>
     </linearGradient>
   </defs>
 
-  <rect width="1200" height="630" fill="url(#bg)"/>
-  <circle cx="1040" cy="-40" r="280" fill="#ffffff" fill-opacity="0.06"/>
-  <circle cx="120" cy="630" r="220" fill="#ffffff" fill-opacity="0.05"/>
+  <rect width="1200" height="630" fill="#ffffff"/>
+  <rect x="150" y="130" width="900" height="360" rx="28" fill="#f7f9fc" stroke="#dbe4ef" stroke-width="2"/>
 
-  <rect x="80" y="110" width="1040" height="410" rx="34" fill="#ffffff" fill-opacity="0.08"/>
-
-  <text x="120" y="285" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="88" font-weight="800" letter-spacing="1">
+  <text x="200" y="290" fill="#1a2b43" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="800" letter-spacing="0.5">
     SPEED UP YOUR
   </text>
-  <text x="120" y="380" fill="url(#accent)" font-family="Arial, Helvetica, sans-serif" font-size="88" font-weight="800" letter-spacing="1">
+  <text x="200" y="372" fill="url(#accent)" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="800" letter-spacing="0.5">
     VIDEOS FOR FREE
   </text>
 
-  <text x="120" y="460" fill="#d7e6ff" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="500">
+  <text x="200" y="432" fill="#496180" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="500">
     Local browser tool • Fast preview • Quick export
   </text>
 </svg>
