@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5x Video Speed Up (Mediabunny)</title>
+    <style>
+        :root {
+            --bg: #0a0d12;
+            --panel: #141922;
+            --text: #f8fafc;
+            --muted: #b0bac7;
+            --soft: #202838;
+            --accent: #f8fafc;
+            --accent-text: #0a0d12;
+            --button-soft: #263247;
+            --ok: #2bc174;
+            --shadow: rgba(0, 0, 0, 0.35);
+        }
+
+        body[data-theme="light"] {
+            --bg: #f4f6fa;
+            --panel: #ffffff;
+            --text: #111827;
+            --muted: #4b5563;
+            --soft: #e5eaf3;
+            --accent: #111827;
+            --accent-text: #ffffff;
+            --button-soft: #d9e0ec;
+            --ok: #027a48;
+            --shadow: rgba(17, 24, 39, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            line-height: 1.45;
+            padding: 28px 16px 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--panel);
+            padding: 30px;
+            box-shadow: 0 14px 36px var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+
+        p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pill {
+            background: var(--soft);
+            color: var(--text);
+            padding: 7px 11px;
+            font-size: 0.86rem;
+            font-weight: 600;
+        }
+
+        .hero-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.35;
+        }
+
+        .upload-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .upload-card {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            width: min(620px, 100%);
+            min-height: 140px;
+            background: var(--soft);
+            cursor: pointer;
+            font-weight: 700;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .upload-sub {
+            font-size: 0.92rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .file-name {
+            text-align: center;
+            font-weight: 600;
+            color: var(--muted);
+            min-height: 24px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .speed-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .speed-title {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .speed-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .speed-btn {
+            background: var(--button-soft);
+            color: var(--text);
+            border: none;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .speed-btn.active {
+            background: var(--accent);
+            color: var(--accent-text);
+        }
+
+        .recommendation {
+            color: var(--muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .checkbox-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            color: var(--muted);
+            font-size: 0.92rem;
+            background: var(--soft);
+            padding: 12px;
+        }
+
+        .checkbox-row input {
+            margin-top: 2px;
+        }
+
+        button {
+            padding: 12px 14px;
+            cursor: pointer;
+            background: var(--accent);
+            color: var(--accent-text);
+            border: none;
+            font-weight: 700;
+            font-size: 0.96rem;
+            letter-spacing: 0.01em;
+        }
+
+        button:hover:not(:disabled) {
+            opacity: 0.92;
+        }
+
+        button:disabled {
+            background: #98a2b3;
+            cursor: not-allowed;
+        }
+
+        progress {
+            width: 100%;
+            height: 14px;
+            appearance: none;
+            border: none;
+            background: var(--soft);
+        }
+
+        progress::-webkit-progress-bar {
+            background: var(--soft);
+        }
+
+        progress::-webkit-progress-value {
+            background: var(--ok);
+        }
+
+        #log {
+            background: #0a0d12;
+            color: #f8fafc;
+            padding: 12px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            white-space: pre-wrap;
+            min-height: 46px;
+        }
+
+        a {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .small {
+            font-size: 0.88rem;
+        }
+
+        .ghost-btn {
+            background: var(--button-soft);
+            color: var(--text);
+            font-size: 0.88rem;
+            padding: 9px 11px;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 18px;
+            }
+
+            h1 {
+                font-size: 1.7rem;
+            }
+
+            .hero-text {
+                font-size: 1.08rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div class="container">
+        <div class="topbar">
+            <h1>Video Speed Converter</h1>
+            <button id="themeToggle" class="ghost-btn" type="button">Switch to Light</button>
+        </div>
+        <p class="hero-text">Completely free, runs in your browser, and your video stays on your machine.</p>
+        <p>Perfect when you do not want to install another software app.</p>
+        <p class="small">Built with <a href="https://mediabunny.dev/" target="_blank" rel="noopener noreferrer">Mediabunny</a>.</p>
+        <div class="meta">
+            <span class="pill">Free</span>
+            <span class="pill">In Browser</span>
+            <span class="pill">Local Processing</span>
+        </div>
+
+        <div class="upload-wrap">
+            <label class="upload-card" for="fileInput">
+                <span>Choose Video File</span>
+                <span class="upload-sub">Click to select from your machine</span>
+            </label>
+            <input type="file" id="fileInput" accept="video/*">
+        </div>
+        <div id="fileName" class="file-name">No file selected</div>
+
+        <div class="speed-section">
+            <div class="speed-title">Speed Multiplier</div>
+            <div id="speedButtons" class="speed-grid">
+                <button type="button" class="speed-btn" data-speed="2">2x</button>
+                <button type="button" class="speed-btn" data-speed="3">3x</button>
+                <button type="button" class="speed-btn active" data-speed="5">5x</button>
+                <button type="button" class="speed-btn" data-speed="8">8x</button>
+                <button type="button" class="speed-btn" data-speed="10">10x</button>
+            </div>
+            <div id="speedEstimate" class="recommendation"></div>
+            <div class="recommendation">Recommended for X.com/social media: 2x or 3x for talking clips, 4x+ for timelapse-style posts.</div>
+        </div>
+
+        <label class="checkbox-row" for="discardAudio">
+            <input type="checkbox" id="discardAudio" checked>
+            <span>
+                Discard Audio (recommended). Keeping audio at high speeds often sounds distorted without pitch-correction.
+            </span>
+        </label>
+
+        <button id="convertBtn" disabled>Convert Video</button>
+
+        <div id="progressContainer" style="display:none;">
+            <label>Progress:</label>
+            <progress id="progressBar" value="0" max="100"></progress>
+        </div>
+
+        <div id="log">Waiting for file...</div>
+    </div>
+
+    <script type="module">
+        import { 
+            Input, 
+            Output, 
+            Conversion, 
+            BlobSource, 
+            BufferTarget, 
+            Mp4OutputFormat, 
+            ALL_FORMATS 
+        } from './mediabunny.mjs';
+
+        const fileInput = document.getElementById('fileInput');
+        const convertBtn = document.getElementById('convertBtn');
+        const log = document.getElementById('log');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const discardAudioCheckbox = document.getElementById('discardAudio');
+        const speedButtons = document.querySelectorAll('.speed-btn');
+        const speedEstimate = document.getElementById('speedEstimate');
+        const fileName = document.getElementById('fileName');
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        let selectedSpeed = 5;
+
+        const formatMinutes = (minutes) => {
+            const totalSeconds = Math.max(1, Math.round(minutes * 60));
+            const mm = String(Math.floor(totalSeconds / 60));
+            const ss = String(totalSeconds % 60).padStart(2, '0');
+            return `${mm}:${ss}`;
+        };
+
+        const applyTheme = (theme) => {
+            body.dataset.theme = theme === 'light' ? 'light' : 'dark';
+            themeToggle.textContent = body.dataset.theme === 'dark' ? 'Switch to Light' : 'Switch to Dark';
+            localStorage.setItem('theme', body.dataset.theme);
+        };
+
+        const updateButtonText = () => {
+            convertBtn.textContent = `Convert Video (${selectedSpeed}x)`;
+            speedEstimate.textContent = `Example: a 5:00 video becomes about ${formatMinutes(5 / selectedSpeed)} at ${selectedSpeed}x speed.`;
+        };
+
+        const savedTheme = localStorage.getItem('theme');
+        applyTheme(savedTheme === 'light' ? 'light' : 'dark');
+        updateButtonText();
+
+        themeToggle.addEventListener('click', () => {
+            applyTheme(body.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+
+        speedButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                selectedSpeed = Number(button.dataset.speed);
+                speedButtons.forEach((btn) => btn.classList.remove('active'));
+                button.classList.add('active');
+                updateButtonText();
+            });
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                convertBtn.disabled = false;
+                fileName.textContent = `Selected: ${fileInput.files[0].name}`;
+                log.textContent = `Selected: ${fileInput.files[0].name}`;
+            }
+        });
+
+        convertBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+            const SPEED_FACTOR = selectedSpeed;
+            updateButtonText();
+
+            try {
+                convertBtn.disabled = true;
+                progressContainer.style.display = 'block';
+                log.textContent = `Initializing ${SPEED_FACTOR}x conversion...`;
+
+                // 1. Setup Input
+                const input = new Input({
+                    source: new BlobSource(file),
+                    formats: ALL_FORMATS, // Detects MP4, MOV, WebM, etc.
+                });
+
+                // 2. Setup Output (MP4)
+                const output = new Output({
+                    format: new Mp4OutputFormat(),
+                    target: new BufferTarget(), // Keeps file in memory. Use StreamTarget for huge files.
+                });
+
+                // 3. Configure Conversion
+                const conversion = await Conversion.init({
+                    input,
+                    output,
+                    
+                    // VIDEO PROCESSING
+                    video: {
+                        // This function runs for every single frame
+                        process: (sample) => {
+                            // Divide timestamp and duration by 5 to make it 5x faster
+                            sample.setTimestamp(sample.timestamp / SPEED_FACTOR);
+                            sample.setDuration(sample.duration / SPEED_FACTOR);
+                            return sample;
+                        }
+                    },
+
+                    // AUDIO PROCESSING
+                    audio: (track) => {
+                        // Audio at 5x is usually garbage, so we discard it by default
+                        if (discardAudioCheckbox.checked) {
+                            return { discard: true };
+                        }
+                        
+                        // If user wants to keep it, we must technically speed up timestamps too,
+                        // but this will likely result in overlapping/broken audio 
+                        // because we aren't performing pitch-correction/time-stretching.
+                        return {
+                            process: (sample) => {
+                                sample.setTimestamp(sample.timestamp / SPEED_FACTOR);
+                                return sample;
+                            }
+                        };
+                    }
+                });
+
+                // Check compatibility
+                if (!conversion.isValid) {
+                    throw new Error("Conversion not possible. " + 
+                        JSON.stringify(conversion.discardedTracks.map(t => t.reason)));
+                }
+
+                // Monitor Progress
+                conversion.onProgress = (val) => {
+                    progressBar.value = val * 100;
+                    log.textContent = `Converting... ${Math.round(val * 100)}%`;
+                };
+
+                // 4. EXECUTE
+                await conversion.execute();
+
+                log.textContent = "Conversion Complete! Downloading...";
+
+                // 5. Download the result
+                const buffer = output.target.buffer;
+                const blob = new Blob([buffer], { type: 'video/mp4' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `fast_${file.name}.mp4`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+            } catch (err) {
+                console.error(err);
+                log.textContent = "Error: " + err.message;
+            } finally {
+                convertBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
