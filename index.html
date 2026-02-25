@@ -3,7 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Speed up videos directly in your browser with local processing, a quick 1-minute preview, and one-click full export downloads.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="theme-color" content="#f5f7fa">
+    <link rel="canonical" href="https://speedup-video.pages.dev/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Speedup Video">
+    <meta property="og:description" content="Speed up videos locally in your browser. Preview first, then export full video.">
+    <meta property="og:url" content="https://speedup-video.pages.dev/">
+    <meta property="og:image" content="https://github.com/shametim/speedup-video/releases/download/v1/speedup-video-prod.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Speedup Video">
+    <meta name="twitter:description" content="Fast local browser video speedup with preview-first export flow.">
+    <meta name="twitter:image" content="https://github.com/shametim/speedup-video/releases/download/v1/speedup-video-prod.png">
     <title>Speedup Video</title>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Speedup Video",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Any",
+            "url": "https://speedup-video.pages.dev/",
+            "description": "Speed up videos directly in your browser with local processing, a quick 1-minute preview, and one-click full export downloads."
+        }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
@@ -423,20 +448,12 @@
             margin-top: 6px;
         }
 
-        .cloudflare-note {
+        .deploy-note,
+        .build-note {
             margin: 6px 0 0;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
             color: #4b5565;
             font-size: 0.8rem;
             font-weight: 600;
-        }
-
-        .cloudflare-note img {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
         }
 
         @media (max-width: 980px) {
@@ -549,10 +566,8 @@
 
         <div class="footer">
             <div>All processing stays in-browser.</div>
-            <p class="cloudflare-note">
-                <img src="https://cf-assets.www.cloudflare.com/slt3lc6tev37/5df5tsrC9h5GxedMQEnScq/8b5ca64b77479325052c4217d827f385/cloudflare-workers.svg" alt="Cloudflare logo">
-                Deployed globally with Cloudflare Pages, courtesy of Cloudflare.
-            </p>
+            <p class="deploy-note">Deployed globally with Cloudflare Pages.</p>
+            <p class="build-note">Built with <a href="https://mediabunny.dev/" target="_blank" rel="noopener noreferrer">Mediabunny</a>, courtesy of Mediabunny. Built with <a href="https://openai.com/index/introducing-the-codex-app/" target="_blank" rel="noopener noreferrer">Codex Mac app</a> using gpt-5.3-codex.</p>
         </div>
     </main>
 
