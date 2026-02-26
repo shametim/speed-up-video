@@ -16,14 +16,7 @@
   <rect width="1200" height="630" fill="url(#bgGrad)"/>
   <rect width="1200" height="630" fill="url(#grid)" />
 
-  <!-- Eyebrow row -->
-  <text x="100" y="140" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="800" letter-spacing="4" fill="#667085" text-transform="uppercase">
-    LOCAL VIDEO UTILITY
-  </text>
-  
-  <text x="450" y="140" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="800" letter-spacing="4" fill="#98a2b3" text-transform="uppercase">
-    BY SLOP SHIP
-  </text>
+
 
   <!-- Title -->
   <text x="96" y="290" font-family="system-ui, -apple-system, sans-serif" font-size="120" font-weight="800" letter-spacing="-3" fill="#101828">
