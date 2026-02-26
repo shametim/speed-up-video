@@ -1,71 +1,56 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
-    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
-      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#d9dee7" stroke-width="1" stroke-opacity="0.6"/>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#d9dee7" stroke-width="2" stroke-opacity="0.5"/>
     </pattern>
-    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#101828" flood-opacity="0.06"/>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="24" stdDeviation="32" flood-color="#101828" flood-opacity="0.15"/>
     </filter>
-    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="100%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#f0f4f8" />
     </linearGradient>
   </defs>
 
-  <!-- Background -->
-  <rect width="1200" height="630" fill="#f5f7fa"/>
+  <!-- Background filling whole image -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
   <rect width="1200" height="630" fill="url(#grid)" />
 
-  <!-- Main Content Card -->
-  <rect x="80" y="80" width="1040" height="470" rx="36" fill="url(#bgGrad)" stroke="#d9dee7" stroke-width="2" filter="url(#shadow)"/>
-
   <!-- Eyebrow row -->
-  <text x="160" y="170" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="800" letter-spacing="2" fill="#667085" text-transform="uppercase">
+  <text x="100" y="140" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="800" letter-spacing="4" fill="#667085" text-transform="uppercase">
     LOCAL VIDEO UTILITY
   </text>
   
-  <text x="420" y="170" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="800" letter-spacing="2" fill="#98a2b3" text-transform="uppercase">
+  <text x="450" y="140" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="800" letter-spacing="4" fill="#98a2b3" text-transform="uppercase">
     BY SLOP SHIP
   </text>
 
   <!-- Title -->
-  <text x="156" y="270" font-family="system-ui, -apple-system, sans-serif" font-size="92" font-weight="800" letter-spacing="-2" fill="#101828">
+  <text x="96" y="290" font-family="system-ui, -apple-system, sans-serif" font-size="120" font-weight="800" letter-spacing="-3" fill="#101828">
     Speed Up Video
   </text>
-  <text x="156" y="370" font-family="system-ui, -apple-system, sans-serif" font-size="92" font-weight="800" letter-spacing="-2" fill="#101828">
+  <text x="96" y="420" font-family="system-ui, -apple-system, sans-serif" font-size="120" font-weight="800" letter-spacing="-3" fill="#101828">
     for Free.
   </text>
 
   <!-- Subtitle -->
-  <rect x="160" y="420" width="140" height="40" rx="20" fill="#eef2f7" stroke="#d8e0ea" stroke-width="1"/>
-  <text x="230" y="447" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="800" letter-spacing="0.5" fill="#101828" text-anchor="middle">
+  <rect x="100" y="490" width="220" height="64" rx="32" fill="#eef2f7" stroke="#d8e0ea" stroke-width="2"/>
+  <text x="210" y="532" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="800" letter-spacing="1" fill="#101828" text-anchor="middle">
     RUNS LOCALLY
   </text>
 
-  <text x="320" y="448" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="500" fill="#667085">
+  <text x="350" y="534" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="500" fill="#475467">
     Converts right in your browser.
   </text>
 
-  <!-- Graphic / buttons floating -->
-  <!-- "5x" Button (Active) -->
-  <g transform="translate(840, 220)">
-    <rect x="0" y="0" width="180" height="180" rx="36" fill="#111827" />
-    <text x="90" y="118" font-family="system-ui, -apple-system, sans-serif" font-size="76" font-weight="800" letter-spacing="-1" fill="#ffffff" text-anchor="middle">5x</text>
-  </g>
-  <!-- "2x" Button -->
-  <g transform="translate(710, 130)">
-    <rect x="0" y="0" width="110" height="110" rx="24" fill="#f0f3f7" stroke="#d9dee7" stroke-width="2"/>
-    <text x="55" y="74" font-family="system-ui, -apple-system, sans-serif" font-size="46" font-weight="800" letter-spacing="-1" fill="#101828" text-anchor="middle">2x</text>
-  </g>
-  <!-- "10x" Button -->
-  <g transform="translate(970, 420)">
-    <rect x="0" y="0" width="130" height="130" rx="28" fill="#f0f3f7" stroke="#d9dee7" stroke-width="2"/>
-    <text x="65" y="86" font-family="system-ui, -apple-system, sans-serif" font-size="54" font-weight="800" letter-spacing="-1" fill="#101828" text-anchor="middle">10x</text>
+  <!-- Graphic / button floating -->
+  <g transform="translate(860, 200)" filter="url(#shadow)">
+    <rect x="0" y="0" width="240" height="240" rx="56" fill="#111827" />
+    <text x="120" y="160" font-family="system-ui, -apple-system, sans-serif" font-size="110" font-weight="800" letter-spacing="-4" fill="#ffffff" text-anchor="middle">5x</text>
   </g>
   
-  <!-- "8x" Button -->
-  <g transform="translate(750, 400)">
-    <rect x="0" y="0" width="90" height="90" rx="20" fill="#f0f3f7" stroke="#d9dee7" stroke-width="2"/>
-    <text x="45" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="38" font-weight="800" letter-spacing="-1" fill="#101828" text-anchor="middle">8x</text>
+  <g transform="translate(680, 270)" filter="url(#shadow)">
+    <rect x="0" y="0" width="140" height="100" rx="32" fill="#ffffff" stroke="#d9dee7" stroke-width="3"/>
+    <text x="70" y="68" font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="800" letter-spacing="-2" fill="#101828" text-anchor="middle">>></text>
   </g>
 </svg>
