@@ -1,5 +1,8 @@
 .DS_Store
 .wrangler/
+node_modules/
+dist/
+bun.lockb
 agent-browser-*.png
 speedup-video-prod.png
 googlee4be4edff7cf1d5f.html
