@@ -1,6 +1,6 @@
 {
   "name": "speedup-video",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "scripts": {
     "build": "bun build --compile --target=browser ./index.html --outdir=dist && cp og-image.png googlee4be4edff7cf1d5f.html dist/",
     "deploy": "bun run build && npx wrangler pages deploy ./dist --project-name=speedup-video --branch=main",
