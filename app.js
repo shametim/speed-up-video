@@ -73,7 +73,7 @@ const updateButtonText = () => {
         const newFormatted = formatMinutes((currentVideoDuration / selectedSpeed) / 60);
         speedEstimate.textContent = `This ${originalFormatted} video becomes about ${newFormatted} at ${selectedSpeed}x speed.`;
     } else {
-        speedEstimate.textContent = `Example: a 5:00 video becomes about ${formatMinutes(5 / selectedSpeed)} at ${selectedSpeed}x speed.`;
+        speedEstimate.textContent = '';
     }
 };
 
