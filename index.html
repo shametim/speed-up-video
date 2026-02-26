@@ -340,12 +340,6 @@
             min-width: 220px;
         }
 
-        #previewBtn {
-            background: #ffffff;
-            color: var(--text);
-            border-color: var(--line);
-        }
-
         #convertBtn {
             background: var(--accent);
             color: var(--accent-text);
@@ -362,7 +356,7 @@
             cursor: not-allowed;
         }
 
-        .preview-note {
+        .status-note {
             margin: 0;
             background: var(--surface-soft);
             border: 1px solid #e0e6ef;
@@ -384,18 +378,18 @@
             font-weight: 600;
         }
 
-        .preview-player {
+        .video-player {
             display: none;
             flex-direction: column;
             gap: 8px;
             margin-top: 4px;
         }
 
-        .preview-player .section-label {
+        .video-player .section-label {
             margin: 0;
         }
 
-        .preview-player video {
+        .video-player video {
             width: 100%;
             border-radius: 12px;
             border: 1px solid #d5dce8;
@@ -404,6 +398,10 @@
         }
 
         .download-wrap {
+            display: none;
+        }
+
+        .share-wrap {
             display: none;
         }
 
@@ -425,6 +423,13 @@
 
         .download-link:hover {
             opacity: 0.92;
+        }
+
+        .share-btn {
+            width: 100%;
+            border: 1px solid #0f172a;
+            background: #ffffff;
+            color: #0f172a;
         }
 
         .progress-wrap {
@@ -601,9 +606,10 @@
                 <div class="section speed-section">
                     <div class="section-label">2. Pick speed multiplier</div>
                     <div id="speedButtons" class="speed-grid">
-                        <button type="button" class="speed-btn" data-speed="2">2x</button>
+                        <button type="button" class="speed-btn" data-speed="1.5">1.5x</button>
+                        <button type="button" class="speed-btn active" data-speed="2">2x</button>
                         <button type="button" class="speed-btn" data-speed="3">3x</button>
-                        <button type="button" class="speed-btn active" data-speed="5">5x</button>
+                        <button type="button" class="speed-btn" data-speed="5">5x</button>
                         <button type="button" class="speed-btn" data-speed="8">8x</button>
                         <button type="button" class="speed-btn" data-speed="10">10x</button>
                         <button type="button" class="speed-btn" data-speed="20">20x</button>
@@ -612,8 +618,8 @@
                 </div>
 
                 <label class="checkbox-row" for="discardAudio">
-                    <input type="checkbox" id="discardAudio" checked>
-                    <span>Discard audio (recommended). Keeping audio at high speeds often sounds distorted without pitch correction.</span>
+                    <input type="checkbox" id="discardAudio">
+                    <span>Remove audio from output.</span>
                 </label>
 
                 <label class="checkbox-row" for="compressOutput">
@@ -622,23 +628,16 @@
                 </label>
 
                 <div class="action-row">
-                    <button id="previewBtn" disabled>Create 1-Min Preview</button>
-                    <button id="convertBtn" disabled>Speedup Full Video</button>
+                    <button id="convertBtn" disabled>Speedup Video</button>
                 </div>
                 <p class="intact-note">Your original video stays completely intact — nothing is modified or overwritten.</p>
             </section>
 
-            <section class="panel status-panel" aria-label="Preview and status">
-                <p class="preview-note">Start with the 1-minute preview to check pacing before running the full export.</p>
+            <section class="panel status-panel" aria-label="Conversion status">
+                <p class="status-note">Your converted video appears below when processing finishes.</p>
 
-
-                <div id="previewPlayerWrap" class="preview-player">
-                    <p class="section-label">Preview playback</p>
-                    <video id="previewVideo" controls playsinline></video>
-                </div>
-
-                <div id="fullPlayerWrap" class="preview-player">
-                    <p class="section-label">Full video playback</p>
+                <div id="fullPlayerWrap" class="video-player">
+                    <p class="section-label">Output playback</p>
                     <video id="fullVideo" controls playsinline></video>
                 </div>
 
@@ -649,6 +648,10 @@
 
                 <div id="downloadWrap" class="download-wrap">
                     <a id="downloadFullBtn" class="download-link" href="#" download>Download Full Video</a>
+                </div>
+
+                <div id="shareWrap" class="share-wrap">
+                    <button id="shareBtn" class="share-btn" type="button">Share Video</button>
                 </div>
 
                 <pre id="log">Waiting for file...</pre>
