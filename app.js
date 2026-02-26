@@ -28,6 +28,7 @@ const fullPlayerWrap = document.getElementById('fullPlayerWrap');
 const fullVideo = document.getElementById('fullVideo');
 
 let selectedSpeed = 5;
+let currentVideoDuration = null; // In seconds
 const PREVIEW_SECONDS = 60;
 let previewObjectUrl = null;
 let fullObjectUrl = null;
@@ -66,7 +67,14 @@ const getVideoDuration = (file) => {
 const updateButtonText = () => {
     convertBtn.textContent = `Speedup Full Video (${selectedSpeed}x)`;
     previewBtn.textContent = `Create 1-Min Preview (${selectedSpeed}x)`;
-    speedEstimate.textContent = `Example: a 5:00 video becomes about ${formatMinutes(5 / selectedSpeed)} at ${selectedSpeed}x speed.`;
+    
+    if (currentVideoDuration) {
+        const originalFormatted = formatMinutes(currentVideoDuration / 60);
+        const newFormatted = formatMinutes((currentVideoDuration / selectedSpeed) / 60);
+        speedEstimate.textContent = `This ${originalFormatted} video becomes about ${newFormatted} at ${selectedSpeed}x speed.`;
+    } else {
+        speedEstimate.textContent = `Example: a 5:00 video becomes about ${formatMinutes(5 / selectedSpeed)} at ${selectedSpeed}x speed.`;
+    }
 };
 
 updateButtonText();
@@ -99,11 +107,12 @@ fileInput.addEventListener('change', async () => {
         log.textContent = `Selected: ${file.name}`;
         resetFullDownload();
 
-        const duration = await getVideoDuration(file);
-        if (duration) {
-            const formatted = formatMinutes(duration / 60);
+        currentVideoDuration = await getVideoDuration(file);
+        if (currentVideoDuration) {
+            const formatted = formatMinutes(currentVideoDuration / 60);
             fileName.textContent = `Selected: ${file.name} (${formatted})`;
             log.textContent = `Selected: ${file.name} (Length: ${formatted})`;
+            updateButtonText();
         }
     }
 });
