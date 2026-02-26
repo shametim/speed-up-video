@@ -519,6 +519,13 @@
             line-height: 1.5;
         }
 
+        .intact-note {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 0.86rem;
+            font-weight: 600;
+        }
+
         @media (max-width: 980px) {
             .workspace {
                 grid-template-columns: 1fr;
@@ -559,7 +566,7 @@
                     <p class="brand-mark">by Slop Ship</p>
                 </div>
                 <h1>Speedup Videos For Free.</h1>
-                <p class="intro">Conversion <strong class="run-local">runs on your device</strong> — your video never leaves your phone or computer.</p>
+                <p class="intro"><strong class="run-local">Runs on your device</strong> — your video <strong class="run-local">never leaves your phone or computer</strong>. Open source on <a href="https://github.com/shametim/speedup-video" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
             </div>
             <div class="top-actions">
                 <a class="icon-btn" href="https://github.com/shametim/speedup-video" target="_blank" rel="noopener noreferrer" aria-label="View GitHub repository">
@@ -611,8 +618,9 @@
 
                 <div class="action-row">
                     <button id="previewBtn" disabled>Create 1-Min Preview</button>
-                    <button id="convertBtn" disabled>Convert Full Video</button>
+                    <button id="convertBtn" disabled>Speedup Full Video</button>
                 </div>
+                <p class="intact-note">Your original video stays completely intact — nothing is modified or overwritten.</p>
             </section>
 
             <section class="panel status-panel" aria-label="Preview and status">
@@ -622,6 +630,11 @@
                 <div id="previewPlayerWrap" class="preview-player">
                     <p class="section-label">Preview playback</p>
                     <video id="previewVideo" controls playsinline></video>
+                </div>
+
+                <div id="fullPlayerWrap" class="preview-player">
+                    <p class="section-label">Full video playback</p>
+                    <video id="fullVideo" controls playsinline></video>
                 </div>
 
                 <div id="progressContainer" class="progress-wrap" style="display:none;">

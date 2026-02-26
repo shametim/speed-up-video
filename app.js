@@ -24,6 +24,8 @@ const previewPlayerWrap = document.getElementById('previewPlayerWrap');
 const previewVideo = document.getElementById('previewVideo');
 const downloadWrap = document.getElementById('downloadWrap');
 const downloadFullBtn = document.getElementById('downloadFullBtn');
+const fullPlayerWrap = document.getElementById('fullPlayerWrap');
+const fullVideo = document.getElementById('fullVideo');
 
 let selectedSpeed = 5;
 const PREVIEW_SECONDS = 60;
@@ -47,7 +49,7 @@ const formatMinutes = (minutes) => {
 };
 
 const updateButtonText = () => {
-    convertBtn.textContent = `Convert Full Video (${selectedSpeed}x)`;
+    convertBtn.textContent = `Speedup Full Video (${selectedSpeed}x)`;
     previewBtn.textContent = `Create 1-Min Preview (${selectedSpeed}x)`;
     speedEstimate.textContent = `Example: a 5:00 video becomes about ${formatMinutes(5 / selectedSpeed)} at ${selectedSpeed}x speed.`;
 };
@@ -204,6 +206,10 @@ const runConversion = async (previewOnly) => {
             downloadFullBtn.href = fullObjectUrl;
             downloadFullBtn.download = `${suffix}_${file.name}.mp4`;
             downloadWrap.style.display = 'block';
+            fullVideo.src = fullObjectUrl;
+            fullPlayerWrap.style.display = 'flex';
+            fullVideo.currentTime = 0;
+            fullVideo.play().catch(() => {});
         }
 
     } catch (err) {
