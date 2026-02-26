@@ -1,6 +1,6 @@
 {
   "name": "speedup-video",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "scripts": {
     "build": "bun build --compile --target=browser ./index.html --outdir=dist && cp og-image.png googlee4be4edff7cf1d5f.html apple-touch-icon.png favicon-32x32.png favicon-16x16.png favicon.ico dist/",
     "dev": "bun run build && npx wrangler pages dev ./dist",
