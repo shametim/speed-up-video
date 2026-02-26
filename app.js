@@ -48,6 +48,21 @@ const formatMinutes = (minutes) => {
     return `${mm}:${ss}`;
 };
 
+const getVideoDuration = (file) => {
+    return new Promise((resolve) => {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+        video.onloadedmetadata = () => {
+            window.URL.revokeObjectURL(video.src);
+            resolve(video.duration);
+        };
+        video.onerror = () => {
+            resolve(null);
+        };
+        video.src = URL.createObjectURL(file);
+    });
+};
+
 const updateButtonText = () => {
     convertBtn.textContent = `Speedup Full Video (${selectedSpeed}x)`;
     previewBtn.textContent = `Create 1-Min Preview (${selectedSpeed}x)`;
@@ -75,13 +90,21 @@ speedButtons.forEach((button) => {
     });
 });
 
-fileInput.addEventListener('change', () => {
+fileInput.addEventListener('change', async () => {
     if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
         convertBtn.disabled = false;
         previewBtn.disabled = false;
-        fileName.textContent = `Selected: ${fileInput.files[0].name}`;
-        log.textContent = `Selected: ${fileInput.files[0].name}`;
+        fileName.textContent = `Selected: ${file.name}`;
+        log.textContent = `Selected: ${file.name}`;
         resetFullDownload();
+
+        const duration = await getVideoDuration(file);
+        if (duration) {
+            const formatted = formatMinutes(duration / 60);
+            fileName.textContent = `Selected: ${file.name} (${formatted})`;
+            log.textContent = `Selected: ${file.name} (Length: ${formatted})`;
+        }
     }
 });
 
