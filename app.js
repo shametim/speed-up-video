@@ -133,7 +133,7 @@ const runConversion = async (previewOnly) => {
                 }
 
                 // Keep output FPS in a widely-compatible range by downsampling first,
-                // then retime timestamps to get the requested speed up.
+                // then retime timestamps to get the requested speedup.
                 const conversionFrameRate = Math.max(1, sourceFrameRate / SPEED_FACTOR);
 
                 return {
