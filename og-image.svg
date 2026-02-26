@@ -27,30 +27,15 @@
 
   <!-- Title -->
   <text x="96" y="290" font-family="system-ui, -apple-system, sans-serif" font-size="120" font-weight="800" letter-spacing="-3" fill="#101828">
-    Speed Up Video
+    Speed Up Videos
   </text>
   <text x="96" y="420" font-family="system-ui, -apple-system, sans-serif" font-size="120" font-weight="800" letter-spacing="-3" fill="#101828">
     for Free.
   </text>
 
   <!-- Subtitle -->
-  <rect x="100" y="490" width="220" height="64" rx="32" fill="#eef2f7" stroke="#d8e0ea" stroke-width="2"/>
-  <text x="210" y="532" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="800" letter-spacing="1" fill="#101828" text-anchor="middle">
-    RUNS LOCALLY
+  <text x="100" y="520" font-family="system-ui, -apple-system, sans-serif" font-size="36" font-weight="600" fill="#475467">
+    Video never leaves your device.
   </text>
 
-  <text x="350" y="534" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="500" fill="#475467">
-    Converts right in your browser.
-  </text>
-
-  <!-- Graphic / button floating -->
-  <g transform="translate(860, 200)" filter="url(#shadow)">
-    <rect x="0" y="0" width="240" height="240" rx="56" fill="#111827" />
-    <text x="120" y="160" font-family="system-ui, -apple-system, sans-serif" font-size="110" font-weight="800" letter-spacing="-4" fill="#ffffff" text-anchor="middle">5x</text>
-  </g>
-  
-  <g transform="translate(680, 270)" filter="url(#shadow)">
-    <rect x="0" y="0" width="140" height="100" rx="32" fill="#ffffff" stroke="#d9dee7" stroke-width="3"/>
-    <text x="70" y="68" font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="800" letter-spacing="-2" fill="#101828" text-anchor="middle">>></text>
-  </g>
 </svg>
