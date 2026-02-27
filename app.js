@@ -7,7 +7,8 @@ import {
     Mp4OutputFormat,
     ALL_FORMATS,
     QUALITY_MEDIUM,
-    AudioSample
+    AudioSample,
+    VideoSample
 } from 'mediabunny';
 
 const fileInput = document.getElementById('fileInput');
@@ -17,6 +18,7 @@ const progressBar = document.getElementById('progressBar');
 const progressContainer = document.getElementById('progressContainer');
 const discardAudioCheckbox = document.getElementById('discardAudio');
 const compressOutputCheckbox = document.getElementById('compressOutput');
+const smoothModeCheckbox = document.getElementById('smoothMode');
 const speedButtons = document.querySelectorAll('.speed-btn');
 const speedEstimate = document.getElementById('speedEstimate');
 const fileName = document.getElementById('fileName');
@@ -74,7 +76,8 @@ const updateButtonText = (percent = null) => {
     if (conversionInProgress && Number.isFinite(percent)) {
         convertBtn.textContent = `Converting... ${Math.round(percent)}%`;
     } else {
-        convertBtn.textContent = `Speedup Video (${selectedSpeed}x)`;
+        const modeSuffix = smoothModeCheckbox.checked ? ', Smooth' : '';
+        convertBtn.textContent = `Speedup Video (${selectedSpeed}x${modeSuffix})`;
     }
 
     if (currentVideoDuration) {
@@ -90,6 +93,7 @@ const setControlsLocked = (locked) => {
     fileInput.disabled = locked;
     discardAudioCheckbox.disabled = locked;
     compressOutputCheckbox.disabled = locked;
+    smoothModeCheckbox.disabled = locked;
     speedButtons.forEach((button) => {
         button.disabled = locked;
     });
@@ -291,6 +295,30 @@ const canShareFileNatively = (file) => {
     return true;
 };
 
+const createProcessingCanvas = (width, height) => {
+    if (typeof OffscreenCanvas !== 'undefined') {
+        return new OffscreenCanvas(width, height);
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    return canvas;
+};
+
+const get2DContext = (canvas) => {
+    const context = canvas.getContext('2d');
+    if (!context) {
+        throw new Error('Could not initialize smooth-mode canvas rendering.');
+    }
+    return context;
+};
+
+const drawSampleToCanvas = (sample, context, width, height) => {
+    context.clearRect(0, 0, width, height);
+    sample.draw(context, 0, 0, width, height);
+};
+
 const createSpedUpAudioSample = (sample, speedFactor, timestamp) => {
     const sourceData = new Float32Array(sample.allocationSize({ planeIndex: 0, format: 'f32' }) / 4);
     sample.copyTo(sourceData, { planeIndex: 0, format: 'f32' });
@@ -330,6 +358,11 @@ speedButtons.forEach((button) => {
         button.classList.add('active');
         updateButtonText();
     });
+});
+
+smoothModeCheckbox.addEventListener('change', () => {
+    if (conversionInProgress) return;
+    updateButtonText();
 });
 
 fileInput.addEventListener('change', async () => {
@@ -381,6 +414,7 @@ const runConversion = async () => {
     if (!file) return;
 
     const SPEED_FACTOR = selectedSpeed;
+    const smoothModeEnabled = smoothModeCheckbox.checked;
 
     clearFullOutput();
     progressBar.value = 0;
@@ -391,7 +425,7 @@ const runConversion = async () => {
         convertBtn.disabled = true;
         progressContainer.style.display = 'block';
         updateButtonText(0);
-        log.textContent = `Initializing conversion at ${SPEED_FACTOR}x...`;
+        log.textContent = `Initializing ${smoothModeEnabled ? 'smooth ' : ''}conversion at ${SPEED_FACTOR}x...`;
 
         const input = new Input({
             source: new BlobSource(file),
@@ -407,7 +441,6 @@ const runConversion = async () => {
             input,
             output,
             video: async (track) => {
-                let sourceFrameRate = 30;
                 const browserHasDisplayOrientation = Number.isFinite(sourceDisplayWidth)
                     && Number.isFinite(sourceDisplayHeight)
                     && sourceDisplayWidth > 0
@@ -423,29 +456,99 @@ const runConversion = async () => {
                     ? normalizeQuarterTurn(sourceMetadataRotation - track.rotation)
                     : 0;
                 const orientationCorrection = metadataRotationCorrection || browserOrientationCorrection;
+                const generatedFramesPerGap = smoothModeEnabled
+                    ? Math.max(1, Math.min(3, Math.round(SPEED_FACTOR / 3)))
+                    : 0;
 
-                try {
-                    const stats = await track.computePacketStats(180);
-                    if (Number.isFinite(stats.averagePacketRate) && stats.averagePacketRate > 0) {
-                        sourceFrameRate = Math.min(120, Math.max(1, stats.averagePacketRate));
+                let previousFrameCanvas = null;
+                let currentFrameCanvas = null;
+                let blendFrameCanvas = null;
+                let previousFrameContext = null;
+                let currentFrameContext = null;
+                let blendFrameContext = null;
+                let previousTimestamp = null;
+
+                const ensureSmoothBuffers = (sample) => {
+                    const frameWidth = sample.displayWidth;
+                    const frameHeight = sample.displayHeight;
+
+                    const needsReset = !previousFrameCanvas
+                        || previousFrameCanvas.width !== frameWidth
+                        || previousFrameCanvas.height !== frameHeight;
+
+                    if (needsReset) {
+                        previousFrameCanvas = createProcessingCanvas(frameWidth, frameHeight);
+                        currentFrameCanvas = createProcessingCanvas(frameWidth, frameHeight);
+                        blendFrameCanvas = createProcessingCanvas(frameWidth, frameHeight);
+                        previousFrameContext = get2DContext(previousFrameCanvas);
+                        currentFrameContext = get2DContext(currentFrameCanvas);
+                        blendFrameContext = get2DContext(blendFrameCanvas);
+                        previousTimestamp = null;
                     }
-                } catch {
-                    // Keep default frame-rate fallback when packet stats cannot be read.
-                }
 
-                const conversionFrameRate = Math.max(1, sourceFrameRate / SPEED_FACTOR);
+                    return { frameWidth, frameHeight };
+                };
 
                 return {
                     width: compressOutputCheckbox.checked ? 1920 : undefined,
                     bitrate: compressOutputCheckbox.checked ? QUALITY_MEDIUM : undefined,
-                    frameRate: conversionFrameRate,
                     rotate: orientationCorrection,
                     allowRotationMetadata: false,
                     process: (sample) => {
                         sample.setRotation(0);
-                        sample.setTimestamp(sample.timestamp / SPEED_FACTOR);
+
+                        if (!smoothModeEnabled) {
+                            sample.setTimestamp(sample.timestamp / SPEED_FACTOR);
+                            sample.setDuration(sample.duration / SPEED_FACTOR);
+                            return sample;
+                        }
+
+                        const inputTimestamp = sample.timestamp;
+                        const { frameWidth, frameHeight } = ensureSmoothBuffers(sample);
+                        drawSampleToCanvas(sample, currentFrameContext, frameWidth, frameHeight);
+
+                        if (!Number.isFinite(previousTimestamp)) {
+                            previousFrameContext.clearRect(0, 0, frameWidth, frameHeight);
+                            previousFrameContext.drawImage(currentFrameCanvas, 0, 0, frameWidth, frameHeight);
+                            previousTimestamp = inputTimestamp;
+                            sample.setTimestamp(inputTimestamp / SPEED_FACTOR);
+                            sample.setDuration(sample.duration / SPEED_FACTOR);
+                            return sample;
+                        }
+
+                        const delta = inputTimestamp - previousTimestamp;
+                        const outputSamples = [];
+
+                        if (delta > 0 && generatedFramesPerGap > 0) {
+                            const generatedDuration = Math.max(1e-6, (delta / (generatedFramesPerGap + 1)) / SPEED_FACTOR);
+
+                            for (let frameIndex = 1; frameIndex <= generatedFramesPerGap; frameIndex++) {
+                                const mixAmount = frameIndex / (generatedFramesPerGap + 1);
+                                const blendedTimestamp = previousTimestamp + (delta * mixAmount);
+
+                                blendFrameContext.clearRect(0, 0, frameWidth, frameHeight);
+                                blendFrameContext.globalAlpha = 1;
+                                blendFrameContext.drawImage(previousFrameCanvas, 0, 0, frameWidth, frameHeight);
+                                blendFrameContext.globalAlpha = mixAmount;
+                                blendFrameContext.drawImage(currentFrameCanvas, 0, 0, frameWidth, frameHeight);
+                                blendFrameContext.globalAlpha = 1;
+
+                                outputSamples.push(new VideoSample(blendFrameCanvas, {
+                                    timestamp: blendedTimestamp / SPEED_FACTOR,
+                                    duration: generatedDuration
+                                }));
+                            }
+                        }
+
+                        sample.setTimestamp(inputTimestamp / SPEED_FACTOR);
                         sample.setDuration(sample.duration / SPEED_FACTOR);
-                        return sample;
+                        outputSamples.push(sample);
+
+                        previousFrameContext.clearRect(0, 0, frameWidth, frameHeight);
+                        previousFrameContext.drawImage(currentFrameCanvas, 0, 0, frameWidth, frameHeight);
+                        previousTimestamp = inputTimestamp;
+
+                        return outputSamples;
                     }
                 };
             },
